@@ -2,78 +2,69 @@
 # _*_ coding: utf-8 _*_
 
 import sys
-from datetime import date
 
-
-def get_worker():
+def get_product():
     """""
-    Запросить данные о работнике.
+    Запросить данные о продукте.
     """""
-    name = input("Фамилия и инициалы: ")
-    post = input("Должность: ")
-    year = int(input("Год поступления: "))
+    product = input("Название товара: ")
+    shop = input("Магазин: ")
+    cost = int(input("Стоимость товара: "))
 
     # Создать словарь
     return {
-        'name': name,
-        'post': post,
-        'year': year,
+        'product': product,
+        'shop': shop,
+        'cost': cost,
     }
 
 
-def display_worker(staff):
+def display_products(products):
     """""
     Отобразить список работников
     """""
     # Проверить что список работников не пуст
-    if staff:
+    if products:
         # Заголовок таблицы
         line = '+-{}-+-{}-+-{}-+-{}-+'.format(
-                '-' * 4,
-                '-' * 30,
-                '-' * 20,
-                '-' * 8
-            )
+            '-' * 4,
+            '-' * 30,
+            '-' * 20,
+            '-' * 15
+        )
         print(line)
         print(
-            '| {:^4} | {:^30} | {:^20} | {:^8} |'.format(
+            '| {:^4} | {:^30} | {:^20} | {:^15} |'.format(
                 "№",
-                "Ф.И.О.",
-                "Должность",
-                "Год"
+                "Товар",
+                "Магазин",
+                "Стоимость товара"
             )
         )
         print(line)
 
-        # Вывести данные о всех сотрудниках
-        for idx, worker in enumerate(staff, 1):
+        for idx, products in enumerate(products, 1):
             print(
-                '| {:>4} | {:<30} | {:<20} | {:>8} |'.format(
+                '| {:^4} | {:<30} | {:<20} | {:<15} |'.format(
                     idx,
-                    worker.get('name', ''),
-                    worker.get('post', ''),
-                    worker.get('year', 0)
+                    products.get('product', ''),
+                    products.get('shop', ''),
+                    products.get('cost', ''),
+                    ' ' * 5
                 )
             )
-            print(line)
+
+        print(line)
 
     else:
-        print("Список работников пуст.")
+        print("Список товаров пуст.")
 
 
-def select_workers(staff, period):
+def select_product(products, addedtovar):
     """""
-    Выбрать работников с заданным стажем
+    Выбрать необходимый товар
     """""
-    # Получить текущую дату
-    today = date.today()
-    # Сформировать список работников
-    result = []
-    for employee in staff:
-        if today.year - employee.get('year', today.year) >= period:
-            result.append(employee)
-
-    # Возвратить список выбранных работников
+    result = [product for product in products if product.get('product', '') == addedtovar]
     return result
 
 
@@ -81,8 +72,9 @@ def main():
     """""
     Главная функция программы
     """""
-    # Список работников
-    workers = []
+    print("help - список всех команд")
+    # Список товаров
+    products = []
 
     # Организовать бесконечный цикл запроса команд
     while True:
@@ -92,26 +84,26 @@ def main():
             break
 
         elif command == 'add':
-            worker = get_worker()
-            workers.append(worker)
+            product = get_product()
+            products.append(product)
 
-            if len(workers) > 1:
-                workers.sort(key=lambda item: item.get('name', ''))
+            if len(products) > 1:
+                products.sort(key=lambda d: d.get('product', ''))
 
         elif command == 'list':
-            display_worker(workers)
+            display_products(products)
 
-        elif command.startswith('select '):
-            parts = command.split(' ', maxsplit=1)
-            period = int(parts[1])
-            selected = select_workers(workers, period)
-            display_worker(selected)
+        elif command == 'select':
+            print("Введите товар, информацию о котором хотите получить: ")
+            tov = input()
+            selected = select_product(products, tov)
+            display_products(selected)
 
         elif command == 'help':
             print("Список команд:\n")
-            print("add - добавить работника;")
-            print("list - вывести список работников;")
-            print("select <стаж> - запросить работников со стажем;")
+            print("add - добавить товар;")
+            print("list - вывести список товаров;")
+            print("select - запросить информацию о товаре;")
             print("help - вывести список команд;")
             print("exit - завершить работу с программой.")
 
